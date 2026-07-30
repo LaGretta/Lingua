@@ -1,0 +1,6 @@
+@LinguaFlow.API_HostAddress = http://localhost:5215
+
+GET {{LinguaFlow.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
