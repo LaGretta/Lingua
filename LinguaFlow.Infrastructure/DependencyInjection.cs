@@ -23,6 +23,7 @@ public static class DependencyInjection
         services.AddScoped<ILessonsRepository, LessonRepository>();
         services.AddScoped<IWordsRepository, WordRepository>();
         services.AddScoped<IExercisesRepository, ExerciseRepository>();
+        services.AddScoped<IUserWordProgressRepository, UserWordProgressRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
