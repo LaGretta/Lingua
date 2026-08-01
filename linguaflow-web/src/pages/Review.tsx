@@ -14,36 +14,55 @@ const GRADES: { grade: ReviewGrade; recommended?: boolean }[] = [
   { grade: 'Easy' },
 ];
 
+// A calm ring badge reused by the empty / complete states.
+function DoneBadge() {
+  return (
+    <div style={{ width: 72, height: 72, borderRadius: 24, background: 'var(--accent-soft)', display: 'grid', placeItems: 'center', color: 'var(--accent)' }}>
+      <CheckIcon size={36} strokeWidth={2.2} />
+    </div>
+  );
+}
+
+// Header for the "landing" states (loading / empty / complete). Review is a bottom-tab
+// destination, so these keep the normal tab bar (via <Screen tabbar>) and a title —
+// no lone floating ✕.
+function ReviewHeader() {
+  return (
+    <div style={{ padding: '8px 0 4px' }}>
+      <div className="title">Review</div>
+      <div className="caption" style={{ marginTop: 4 }}>
+        Spaced repetition
+      </div>
+    </div>
+  );
+}
+
 export function Review() {
   const nav = useNavigate();
   const { data, loading, error, reload } = useAsync(() => reviewApi.today(), []);
 
   if (loading) {
     return (
-      <Screen>
-        <ReviewTop onClose={() => nav('/')} label="Review" />
+      <Screen tabbar>
+        <ReviewHeader />
         <Loading label="Loading today’s review…" />
       </Screen>
     );
   }
   if (error) {
     return (
-      <Screen>
-        <ReviewTop onClose={() => nav('/')} label="Review" />
+      <Screen tabbar>
+        <ReviewHeader />
         <ErrorState message={error} onRetry={reload} />
       </Screen>
     );
   }
   if (!data || data.length === 0) {
     return (
-      <Screen>
-        <ReviewTop onClose={() => nav('/')} label="Review" />
+      <Screen tabbar>
+        <ReviewHeader />
         <EmptyState
-          icon={
-            <div style={{ width: 72, height: 72, borderRadius: 24, background: 'var(--accent-soft)', display: 'grid', placeItems: 'center', color: 'var(--accent)' }}>
-              <CheckIcon size={36} strokeWidth={2.2} />
-            </div>
-          }
+          icon={<DoneBadge />}
           title="All done for today"
           body="No words are due right now. As you learn and grade words, spaced repetition schedules them here on the day they’re due — check back tomorrow."
         />
@@ -63,6 +82,7 @@ function ReviewRunner({ queue, onExit }: { queue: ReviewWord[]; onExit: () => vo
   const [done, setDone] = useState(false);
 
   const card = queue[index];
+  const progress = Math.round((index / total) * 100);
 
   async function grade(g: ReviewGrade) {
     setBusy(true);
@@ -82,16 +102,13 @@ function ReviewRunner({ queue, onExit }: { queue: ReviewWord[]; onExit: () => vo
     }
   }
 
+  // Session finished → restore the normal tab bar and show a calm summary.
   if (done) {
     return (
-      <Screen>
-        <ReviewTop onClose={onExit} label="Review" />
+      <Screen tabbar>
+        <ReviewHeader />
         <EmptyState
-          icon={
-            <div style={{ width: 72, height: 72, borderRadius: 24, background: 'var(--accent-soft)', display: 'grid', placeItems: 'center', color: 'var(--accent)' }}>
-              <CheckIcon size={36} strokeWidth={2.2} />
-            </div>
-          }
+          icon={<DoneBadge />}
           title="Review complete"
           body={`You reviewed ${total} ${total === 1 ? 'word' : 'words'}. Nicely done.`}
           action={
@@ -104,9 +121,10 @@ function ReviewRunner({ queue, onExit }: { queue: ReviewWord[]; onExit: () => vo
     );
   }
 
+  // Active session → focused mode (no tab bar), with a clear header: close, progress, count.
   return (
     <Screen>
-      <ReviewTop onClose={onExit} label={`Review · ${index + 1} of ${total}`} />
+      <SessionTop onExit={onExit} progress={progress} index={index} total={total} />
 
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div
@@ -163,18 +181,33 @@ function ReviewRunner({ queue, onExit }: { queue: ReviewWord[]; onExit: () => vo
   );
 }
 
-function ReviewTop({ onClose, label }: { onClose: () => void; label: string }) {
+// Focused-session header, mirroring the Lesson player: close ✕, progress bar, count.
+function SessionTop({
+  onExit,
+  progress,
+  index,
+  total,
+}: {
+  onExit: () => void;
+  progress: number;
+  index: number;
+  total: number;
+}) {
   return (
-    <div className="row-between" style={{ padding: '6px 0 4px' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '6px 0 18px' }}>
       <button
-        onClick={onClose}
+        onClick={onExit}
         aria-label="Close review"
         style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-3)', padding: 0 }}
       >
         <CloseIcon size={24} strokeWidth={2} />
       </button>
-      <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-muted)' }}>{label}</span>
-      <div style={{ width: 24 }} />
+      <div className="progress" style={{ flex: 1 }}>
+        <span style={{ width: `${progress}%` }} />
+      </div>
+      <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', minWidth: 42, textAlign: 'right' }}>
+        {index + 1} / {total}
+      </span>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useAsync } from '../lib/useAsync';
 import { coursesApi } from '../api/endpoints';
 import { getCourseLessons } from '../lib/discoverLessons';
 import { ChevronRight, CloseIcon, LockIcon } from '../components/Icons';
+import { CourseCover } from '../components/CourseCover';
 import { EmptyState, ErrorState, Loading, SkeletonCards } from '../components/States';
 
 export function CourseDetail() {
@@ -33,6 +34,9 @@ export function CourseDetail() {
 
       {course.data && (
         <>
+          <div className="card flush">
+            <CourseCover level={course.data.languageLevel} height={128} />
+          </div>
           <div>
             <div className="eyebrow">{course.data.languageLevel}</div>
             <h1 className="title" style={{ marginTop: 8 }}>

@@ -3,7 +3,7 @@ import { Screen } from '../components/Screen';
 import { useAsync } from '../lib/useAsync';
 import { coursesApi } from '../api/endpoints';
 import { ChevronRight } from '../components/Icons';
-import { Ring } from '../components/Ring';
+import { CourseCover } from '../components/CourseCover';
 import { ErrorState, SkeletonCards } from '../components/States';
 
 export function Courses() {
@@ -35,20 +35,20 @@ export function Courses() {
       {data?.map((c) => (
         <button
           key={c.id}
-          className="card row-between"
-          style={{ gap: 16, cursor: 'pointer', textAlign: 'left', font: 'inherit', display: 'flex' }}
+          className="card flush"
+          style={{ cursor: 'pointer', textAlign: 'left', font: 'inherit', display: 'block', width: '100%' }}
           onClick={() => nav(`/courses/${c.id}`)}
         >
-          <Ring percent={0} size={52} thickness={6}>
-            <span style={{ fontSize: 12, fontWeight: 800 }}>{c.languageLevel}</span>
-          </Ring>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 17, fontWeight: 700 }}>{c.title}</div>
-            <div className="caption" style={{ marginTop: 2 }}>
-              {c.lessonsCount} {c.lessonsCount === 1 ? 'lesson' : 'lessons'} · {c.languageLevel}
+          <CourseCover level={c.languageLevel} height={112} />
+          <div className="row-between" style={{ padding: '14px 16px', gap: 12 }}>
+            <div>
+              <div style={{ fontSize: 17, fontWeight: 700 }}>{c.title}</div>
+              <div className="caption" style={{ marginTop: 2 }}>
+                {c.lessonsCount} {c.lessonsCount === 1 ? 'lesson' : 'lessons'} · {c.languageLevel}
+              </div>
             </div>
+            <ChevronRight size={20} style={{ color: 'var(--accent)' }} />
           </div>
-          <ChevronRight size={20} style={{ color: 'var(--accent)' }} />
         </button>
       ))}
     </Screen>

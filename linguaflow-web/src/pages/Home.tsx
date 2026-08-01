@@ -4,6 +4,7 @@ import { useAuth } from '../auth/AuthContext';
 import { useAsync } from '../lib/useAsync';
 import { coursesApi, reviewApi } from '../api/endpoints';
 import { ChevronRight, LeafIcon } from '../components/Icons';
+import { CourseCover } from '../components/CourseCover';
 import { SkeletonCards } from '../components/States';
 import { Avatar } from '../components/Avatar';
 
@@ -67,19 +68,7 @@ export function Home() {
         <div className="notice">Couldn’t load courses: {courses.error}</div>
       ) : firstCourse ? (
         <div className="card flush">
-          <div
-            style={{
-              height: 118,
-              background:
-                'repeating-linear-gradient(135deg,#EFEDE7 0 13px,#F5F3EE 13px 26px)',
-              display: 'grid',
-              placeItems: 'center',
-            }}
-          >
-            <span style={{ fontFamily: 'ui-monospace,monospace', fontSize: 11, letterSpacing: 1, color: '#B4AFA4' }}>
-              {firstCourse.title.toUpperCase()}
-            </span>
-          </div>
+          <CourseCover level={firstCourse.languageLevel} height={118} />
           <div style={{ padding: '18px 20px' }}>
             <div className="eyebrow">{firstCourse.languageLevel}</div>
             <div style={{ fontSize: 19, fontWeight: 700, marginTop: 6, letterSpacing: '-.3px' }}>

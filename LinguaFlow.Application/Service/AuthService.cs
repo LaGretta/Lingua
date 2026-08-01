@@ -73,4 +73,13 @@ public class AuthService : IAuthService
         response.Token = _jwtTokenGenerator.GenerateJwtToken(find);
         return response;
     }
+    
+    public async Task<UserResponseDto> GetProfile(int userId, CancellationToken ct)
+    {
+        var user = await _authRepository.GetByIdAsync(userId, ct);
+        if (user == null)
+            throw new KeyNotFoundException("User not found");
+
+        return _mapper.Map<UserResponseDto>(user);
+    }
 }

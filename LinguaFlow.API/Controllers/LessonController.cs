@@ -34,7 +34,7 @@ public class LessonsController : ControllerBase
     }
 
     [Authorize(Roles = Roles.Admin)]
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, CreateLessonDto dto, CancellationToken ct)
     {
         var updated = await _lessonService.UpdateLessonById(id, dto, ct);
@@ -42,7 +42,7 @@ public class LessonsController : ControllerBase
     }
 
     [Authorize(Roles = Roles.Admin)]
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id, CancellationToken ct)
     {
         await _lessonService.DeleteLessonById(id, ct);
@@ -50,13 +50,14 @@ public class LessonsController : ControllerBase
     }
     
     [Authorize(Roles = Roles.Admin)]
-    [HttpPost("{id}/words")]
+    [HttpPost("{id:int}/words")]
     public async Task<IActionResult> AddWords(int id, List<int> wordIds, CancellationToken ct)
     {
         await _lessonService.AddWordsToLesson(id, wordIds, ct);
         return NoContent();
     }
-    [HttpGet("{id}/exercises")]
+    
+    [HttpGet("{id:int}/exercises")]
     public async Task<IActionResult> GetExercises(int id, CancellationToken ct)
     {
         var exercises = await _lessonService.GetLessonExercises(id, ct);
