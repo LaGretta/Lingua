@@ -48,4 +48,24 @@ public class LessonsController : ControllerBase
         await _lessonService.DeleteLessonById(id, ct);
         return NoContent();
     }
+    
+    [Authorize(Roles = Roles.Admin)]
+    [HttpPost("{id}/words")]
+    public async Task<IActionResult> AddWords(int id, List<int> wordIds, CancellationToken ct)
+    {
+        await _lessonService.AddWordsToLesson(id, wordIds, ct);
+        return NoContent();
+    }
+    [HttpGet("{id}/exercises")]
+    public async Task<IActionResult> GetExercises(int id, CancellationToken ct)
+    {
+        var exercises = await _lessonService.GetLessonExercises(id, ct);
+        return Ok(exercises);
+    }
+    [HttpPost("check-answer")]
+    public async Task<IActionResult> CheckAnswer(SubmitAnswerDto dto, CancellationToken ct)
+    {
+        var result = await _lessonService.CheckAnswer(dto, ct);
+        return Ok(result);
+    }
 }

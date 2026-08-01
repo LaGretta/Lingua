@@ -29,4 +29,13 @@ public class AuthRepository : IAuthRepository
     {
         await _dbContext.Users.AddAsync(user, ct);
     }
+    
+    public async Task<User?> GetByIdAsync(int id, CancellationToken ct)
+    {
+        return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id, ct);
+    }
+    public void UpdateUser(User user)
+    {
+        _dbContext.Users.Update(user);
+    }
 }

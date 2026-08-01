@@ -37,5 +37,15 @@ public class LessonRepository : ILessonsRepository
     {
         _dbContext.Lessons.Remove(lesson);
     }
+    
+    
+    public async Task AddWordsToLessonAsync(List<LessonItem> items, CancellationToken ct)
+    {
+        await _dbContext.LessonItems.AddRangeAsync(items, ct);
+    }
+    public async Task AddCompletionAsync(LessonCompletion completion, CancellationToken ct)
+    {
+        await _dbContext.LessonCompletions.AddAsync(completion, ct);
+    }
 }
 

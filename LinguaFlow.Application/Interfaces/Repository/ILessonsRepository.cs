@@ -8,4 +8,7 @@ public interface ILessonsRepository
     Task CreateLessonAsync(Lesson lesson, CancellationToken ct);
     void UpdateLesson(Lesson lesson);
     void DeleteLesson(Lesson lesson);
+    
+    Task AddWordsToLessonAsync(List<LessonItem> items, CancellationToken ct);
+    Task AddCompletionAsync(LessonCompletion completion, CancellationToken ct);
 }
