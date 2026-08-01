@@ -1,0 +1,14 @@
+node_modules
+dist
+dist-ssr
+*.local
+.vite
+*.tsbuildinfo
+
+# Keep .env for the dev default API URL; it contains no secrets.
+# Ignore personal overrides only.
+.env.local
+.env.*.local
+
+.DS_Store
+*.log

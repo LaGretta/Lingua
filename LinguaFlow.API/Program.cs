@@ -48,6 +48,15 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// CORS for the local dev frontend (linguaflow-web / Vite). Scoped to the Vite dev
+// origin only; the app uses Bearer tokens (not cookies), so credentials aren't needed.
+const string DevFrontendCors = "DevFrontend";
+builder.Services.AddCors(options =>
+    options.AddPolicy(DevFrontendCors, policy =>
+        policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()));
+
 var app = builder.Build();
 
 app.UseExceptionHandler();
@@ -69,6 +78,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(DevFrontendCors);
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

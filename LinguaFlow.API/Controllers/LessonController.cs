@@ -68,4 +68,11 @@ public class LessonsController : ControllerBase
         var result = await _lessonService.CheckAnswer(dto, ct);
         return Ok(result);
     }
+    [HttpPost("complete")]
+    public async Task<IActionResult> Complete(CompleteLessonDto dto, CancellationToken ct)
+    {
+        var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
+        await _lessonService.CompleteLesson(userId, dto, ct);
+        return NoContent();
+    }
 }

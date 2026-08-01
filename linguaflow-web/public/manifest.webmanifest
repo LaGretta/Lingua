@@ -1,0 +1,17 @@
+{
+  "name": "LinguaFlow",
+  "short_name": "LinguaFlow",
+  "description": "A calmer, more beautiful way to reach English fluency — a few quiet minutes a day.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FBFAF7",
+  "theme_color": "#2F6B4E",
+  "categories": ["education"],
+  "icons": [
+    { "src": "/icons/pwa-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/pwa-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

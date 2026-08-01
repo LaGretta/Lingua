@@ -15,7 +15,9 @@ public class CourseRepository : ICoursesRepository
 
     public async Task<List<Course>> GetAllCoursesAsync(CancellationToken ct)
     {
-        return await _dbContext.Courses.ToListAsync(ct);
+        return await _dbContext.Courses
+            .Include(c => c.Lessons)
+            .ToListAsync(ct);
     }
 
     public async Task<Course?> GetCourseByIdAsync(int id, CancellationToken ct)

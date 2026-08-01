@@ -1,0 +1,85 @@
+﻿@host = http://localhost:5215
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQGxpbmd1YWZsb3cubG9jYWwiLCJleHAiOjE3ODU2MTQzNTcsImlzcyI6Ikxpbmd1YUZsb3ciLCJhdWQiOiJMaW5ndWFGbG93VXNlcnMifQ.DlhsaBPM0LPD2A2xQjzSpos030S2ciS-bR3Fj4AKjXA
+
+### 1. Логін адміном
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@linguaflow.local",
+  "password": "admin123"
+}
+
+### 2. Створити курс (встав токен у @token вгорі з відповіді login)
+POST {{host}}/api/courses
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "English A1",
+  "description": "Beginner course",
+  "languageLevel": "A1",
+  "order": 1
+}
+
+### 3. Створити урок
+POST {{host}}/api/lessons
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Food",
+  "order": 1,
+  "courseId": 1
+}
+
+### 4. Залити слова пачкою
+POST {{host}}/api/words/import
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+[
+  { "text": "apple", "translation": "яблуко", "partOfSpeech": "noun", "exampleSentence": "I eat an apple", "exampleTranslation": "Я їм яблуко" },
+  { "text": "bread", "translation": "хліб", "partOfSpeech": "noun", "exampleSentence": "Fresh bread", "exampleTranslation": "Свіжий хліб" },
+  { "text": "water", "translation": "вода", "partOfSpeech": "noun", "exampleSentence": "Cold water", "exampleTranslation": "Холодна вода" },
+  { "text": "milk", "translation": "молоко", "partOfSpeech": "noun", "exampleSentence": "Warm milk", "exampleTranslation": "Тепле молоко" }
+]
+
+### 5. Покласти слова в урок
+POST {{host}}/api/lessons/1/words
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+[1, 2, 3, 4]
+
+### 6. Отримати урок зі словами
+GET {{host}}/api/lessons/1
+Authorization: Bearer {{token}}
+
+### 7. Отримати вправи уроку (генерація з дистракторами)
+GET {{host}}/api/lessons/1/exercises
+Authorization: Bearer {{token}}
+
+### 8. Перевірити відповідь
+POST {{host}}/api/lessons/check-answer
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "wordId": 1,
+  "answer": "яблуко"
+}
+
+### 9. Оцінити слово (повторення SM-2)
+POST {{host}}/api/review/grade
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "wordId": 1,
+  "grade": "Good"
+}
+
+### 10. Слова на повторення сьогодні
+GET {{host}}/api/review/today
+Authorization: Bearer {{token}}

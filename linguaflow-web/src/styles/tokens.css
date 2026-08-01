@@ -1,0 +1,52 @@
+/* LinguaFlow design tokens — transcribed from the design handoff (README.md + LinguaFlow.html). */
+:root {
+  /* Color */
+  --canvas: #efebe4;
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --text: #1c1b19;
+  --text-2: #6f6a61;
+  --text-3: #a8a399;
+  --text-muted: #8a867e;
+  --accent: #2f6b4e;
+  --accent-ink: #245b41;
+  --accent-soft: #eaf2ed;
+  --accent-soft-ink: #3d7a5c;
+  --warn: #b4703a;
+  --warn-ink: #8f5325;
+  --warn-soft: #f5ebe2;
+  --hairline: rgba(28, 27, 25, 0.06);
+  --hairline-2: rgba(28, 27, 25, 0.08);
+  --hairline-strong: rgba(28, 27, 25, 0.1);
+  --disabled-bg: #efece5;
+  --disabled-text: #b4afa4;
+  --bar-muted: #cde0d4;
+  --ring-track: #e9e6df;
+
+  /* Radius */
+  --r-btn: 16px;
+  --r-card: 22px;
+  --r-card-lg: 24px;
+  --r-sheet: 28px;
+  --r-pill: 20px;
+
+  /* Spacing scale */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 20px;
+  --s6: 24px;
+  --gutter: 24px;
+
+  /* Shadow */
+  --sh-card: 0 8px 24px -18px rgba(28, 27, 25, 0.2);
+  --sh-card-lg: 0 12px 32px -20px rgba(28, 27, 25, 0.25);
+  --sh-raised: 0 24px 50px -24px rgba(28, 27, 25, 0.28);
+  --sh-accent: 0 14px 30px -12px rgba(47, 107, 78, 0.6);
+  --sh-accent-soft: 0 12px 30px -18px rgba(47, 107, 78, 0.4);
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur: 220ms;
+}
