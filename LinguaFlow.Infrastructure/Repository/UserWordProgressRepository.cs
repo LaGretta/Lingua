@@ -35,4 +35,15 @@ public class UserWordProgressRepository : IUserWordProgressRepository
     {
         _dbContext.UserWordProgress.Update(progress);
     }
+    public async Task<List<int>> GetExistingWordIdsAsync(int userId, List<int> wordIds, CancellationToken ct)
+    {
+        return await _dbContext.UserWordProgress
+            .Where(p => p.UserId == userId && wordIds.Contains(p.WordId))
+            .Select(p => p.WordId)
+            .ToListAsync(ct);
+    }
+    public async Task AddRangeAsync(List<UserWordProgress> items, CancellationToken ct)
+    {
+        await _dbContext.UserWordProgress.AddRangeAsync(items, ct);
+    }
 }

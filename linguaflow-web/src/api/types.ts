@@ -29,6 +29,17 @@ export interface AuthResponse {
   planTier: PlanTier;
 }
 
+// GET /api/users/me — UserResponseDto (no token; carries the live streak/XP).
+export interface UserProfile {
+  id: number;
+  username: string;
+  email: string;
+  role: Role;
+  planTier: PlanTier;
+  currentStreakDays: number;
+  totalXp: number;
+}
+
 export interface RegisterRequest {
   username: string;
   email: string;

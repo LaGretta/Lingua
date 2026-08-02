@@ -8,4 +8,6 @@ public interface IUserWordProgressRepository
     Task<List<UserWordProgress>> GetDueForReviewAsync(int userId, CancellationToken ct);
     Task AddAsync(UserWordProgress progress, CancellationToken ct);
     void Update(UserWordProgress progress);
+    Task<List<int>> GetExistingWordIdsAsync(int userId, List<int> wordIds, CancellationToken ct);
+    Task AddRangeAsync(List<UserWordProgress> items, CancellationToken ct);
 }

@@ -18,6 +18,7 @@ import type {
   ReviewWord,
   AnswerResult,
   SubmitAnswerRequest,
+  UserProfile,
   WordResponse,
 } from './types';
 
@@ -25,6 +26,11 @@ import type {
 export const authApi = {
   register: (dto: RegisterRequest) => api.post<AuthResponse>('/api/auth/register', dto),
   login: (dto: LoginRequest) => api.post<AuthResponse>('/api/auth/login', dto),
+};
+
+/* ---- Users ---- */
+export const usersApi = {
+  me: () => api.get<UserProfile>('/api/users/me'),
 };
 
 /* ---- Courses ---- */

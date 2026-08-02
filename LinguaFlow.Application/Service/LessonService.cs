@@ -17,12 +17,17 @@ public class LessonService : ILessonService
     private readonly  ILogger<LessonService> _logger;
     private readonly IWordsRepository  _wordsRepository;
     private readonly IAuthRepository _authRepository;
+    private readonly IUserWordProgressRepository _progressRepository;   
+
 
     public LessonService(
         IUnitOfWork unitOfWork
         , IMapper mapper
         , ILessonsRepository lessonsRepository
-        , ILogger<LessonService> logger, IWordsRepository wordsRepository, IAuthRepository authRepository)
+        , ILogger<LessonService> logger
+        , IWordsRepository wordsRepository
+        , IAuthRepository authRepository
+        , IUserWordProgressRepository progressRepository)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
@@ -30,6 +35,7 @@ public class LessonService : ILessonService
         _logger = logger;
         _wordsRepository = wordsRepository;
         _authRepository = authRepository;
+        _progressRepository = progressRepository;
     }
 
     public async Task<LessonResponseDto> GetLessonById(int id, CancellationToken ct)
@@ -165,8 +171,8 @@ public class LessonService : ILessonService
     
     public async Task CompleteLesson(int userId, CompleteLessonDto dto, CancellationToken ct)
     {
-        var lesson = await _lessonsRepository.GetLessonByIdAsync(dto.LessonId, ct);
-        if (lesson == null)
+        var find = await _lessonsRepository.GetLessonByIdAsync(dto.LessonId, ct);
+        if (find == null)
             throw new KeyNotFoundException($"Lesson with id {dto.LessonId} not found");
 
         var user = await _authRepository.GetByIdAsync(userId, ct);
@@ -186,7 +192,7 @@ public class LessonService : ILessonService
         _authRepository.UpdateUser(user);
 
         await _unitOfWork.SaveChangesAsync(ct);
-        _logger.LogInformation("User {UserId} completed lesson {LessonId}, earned {Xp} XP",
-            userId, dto.LessonId, dto.TotalXp);
+        _logger.LogInformation("User {UserId} completed lesson {LessonId}", userId, dto.LessonId);
+
     }
 }
