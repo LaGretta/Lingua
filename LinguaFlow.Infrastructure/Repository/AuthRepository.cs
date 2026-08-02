@@ -38,4 +38,11 @@ public class AuthRepository : IAuthRepository
     {
         _dbContext.Users.Update(user);
     }
+    public async Task<List<User>> GetLeaderboardAsync(int top, CancellationToken ct)
+    {
+        return await _dbContext.Users
+            .OrderByDescending(u => u.TotalXp)
+            .Take(top)
+            .ToListAsync(ct);
+    }
 }

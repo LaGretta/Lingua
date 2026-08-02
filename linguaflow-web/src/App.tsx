@@ -10,6 +10,7 @@ import { CourseDetail } from './pages/CourseDetail';
 import { Lesson } from './pages/Lesson';
 import { Review } from './pages/Review';
 import { Profile } from './pages/Profile';
+import { Leaderboard } from './pages/Leaderboard';
 import { Admin } from './pages/Admin';
 
 function RequireAuth({ children }: { children: ReactNode }) {
@@ -42,6 +43,7 @@ export function App() {
           <Route path="/lesson/:id" element={<RequireAuth><Lesson /></RequireAuth>} />
           <Route path="/review" element={<RequireAuth><Review /></RequireAuth>} />
           <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+          <Route path="/leaderboard" element={<RequireAuth><Leaderboard /></RequireAuth>} />
           <Route path="/admin" element={<RequireAuth><Admin /></RequireAuth>} />
 
           <Route path="*" element={<Navigate to="/" replace />} />

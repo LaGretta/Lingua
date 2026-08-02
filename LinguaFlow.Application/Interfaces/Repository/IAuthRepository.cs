@@ -10,4 +10,5 @@ public interface IAuthRepository
     
     Task<User?> GetByIdAsync(int id, CancellationToken ct);
     void UpdateUser(User user);
+    Task<List<User>> GetLeaderboardAsync(int top, CancellationToken ct);
 }

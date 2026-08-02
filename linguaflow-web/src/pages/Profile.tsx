@@ -63,11 +63,18 @@ export function Profile() {
         ))}
       </div>
 
+      <button
+        className="btn btn-secondary"
+        onClick={() => nav('/leaderboard')}
+        style={{ marginTop: 4 }}
+      >
+        View leaderboard
+      </button>
+
       {user?.role === 'Admin' && (
         <button
           className="btn btn-secondary"
           onClick={() => nav('/admin')}
-          style={{ marginTop: 4 }}
         >
           Admin · manage content
         </button>

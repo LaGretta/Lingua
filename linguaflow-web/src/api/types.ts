@@ -40,6 +40,14 @@ export interface UserProfile {
   totalXp: number;
 }
 
+// GET /api/users/leaderboard — ranked highest XP first.
+export interface LeaderboardEntry {
+  rank: number;
+  username: string;
+  totalXp: number;
+  currentStreakDays: number;
+}
+
 export interface RegisterRequest {
   username: string;
   email: string;

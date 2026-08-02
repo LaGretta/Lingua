@@ -5,6 +5,7 @@ using LinguaFlow.Application.Interfaces.Repository;
 using LinguaFlow.Application.Interfaces.Service;
 using LinguaFlow.Domain.Entities;
 using LinguaFlow.Domain.Enums;
+using LinguaFlow.Domain.Services;
 using Microsoft.Extensions.Logging;
 
 namespace LinguaFlow.Application.Service;
@@ -171,14 +172,13 @@ public class LessonService : ILessonService
     
     public async Task CompleteLesson(int userId, CompleteLessonDto dto, CancellationToken ct)
     {
-        var find = await _lessonsRepository.GetLessonByIdAsync(dto.LessonId, ct);
-        if (find == null)
+        var lesson = await _lessonsRepository.GetLessonByIdAsync(dto.LessonId, ct);
+        if (lesson == null)
             throw new KeyNotFoundException($"Lesson with id {dto.LessonId} not found");
 
         var user = await _authRepository.GetByIdAsync(userId, ct);
         if (user == null)
             throw new KeyNotFoundException("User not found");
-
         var completion = new LessonCompletion
         {
             UserId = userId,
@@ -187,12 +187,30 @@ public class LessonService : ILessonService
             Score = dto.Score
         };
         await _lessonsRepository.AddCompletionAsync(completion, ct);
-
         user.TotalXp += dto.TotalXp;
+        StreakCalculator.RegisterActivity(user, DateTime.UtcNow);
         _authRepository.UpdateUser(user);
 
-        await _unitOfWork.SaveChangesAsync(ct);
-        _logger.LogInformation("User {UserId} completed lesson {LessonId}", userId, dto.LessonId);
+        var lessonWordIds = lesson.LessonItems.Select(li => li.WordId).ToList();
+        var existing = await _progressRepository.GetExistingWordIdsAsync(userId, lessonWordIds, ct);
+        var newWordIds = lessonWordIds.Except(existing).ToList();
 
+        var newProgress = newWordIds.Select(wordId => new UserWordProgress
+        {
+            UserId = userId,
+            WordId = wordId,
+            Repetitions = 0,
+            EaseFactor = 2.5,
+            IntervalDays = 1,
+            NextReviewDate = DateTime.UtcNow.Date.AddDays(1),
+            IsLearned = false
+        }).ToList();
+
+        if (newProgress.Count > 0)
+            await _progressRepository.AddRangeAsync(newProgress, ct);
+
+        await _unitOfWork.SaveChangesAsync(ct);
+        _logger.LogInformation("User {UserId} completed lesson {LessonId}, +{Xp} XP, streak {Streak}",
+            userId, dto.LessonId, dto.TotalXp, user.CurrentStreakDays);
     }
 }

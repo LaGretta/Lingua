@@ -24,4 +24,10 @@ public class UsersController : ControllerBase
         var profile = await _authService.GetProfile(userId, ct);
         return Ok(profile);
     }
+    [HttpGet("leaderboard")]
+    public async Task<IActionResult> GetLeaderboard(CancellationToken ct)
+    {
+        var board = await _authService.GetLeaderboard(20, ct);
+        return Ok(board);
+    }
 }

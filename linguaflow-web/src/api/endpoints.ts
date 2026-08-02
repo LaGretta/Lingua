@@ -19,6 +19,7 @@ import type {
   AnswerResult,
   SubmitAnswerRequest,
   UserProfile,
+  LeaderboardEntry,
   WordResponse,
 } from './types';
 
@@ -31,6 +32,7 @@ export const authApi = {
 /* ---- Users ---- */
 export const usersApi = {
   me: () => api.get<UserProfile>('/api/users/me'),
+  leaderboard: () => api.get<LeaderboardEntry[]>('/api/users/leaderboard'),
 };
 
 /* ---- Courses ---- */

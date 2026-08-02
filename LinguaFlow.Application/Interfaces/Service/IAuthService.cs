@@ -8,4 +8,5 @@ public interface IAuthService
     Task<AuthResponseDto> Login(LoginDto login , CancellationToken ct);
     
     Task<UserResponseDto> GetProfile(int userId, CancellationToken ct);
+    Task<List<LeaderboardEntryDto>> GetLeaderboard(int top, CancellationToken ct);
 }

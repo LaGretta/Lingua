@@ -82,4 +82,16 @@ public class AuthService : IAuthService
 
         return _mapper.Map<UserResponseDto>(user);
     }
+    public async Task<List<LeaderboardEntryDto>> GetLeaderboard(int top, CancellationToken ct)
+    {
+        var users = await _authRepository.GetLeaderboardAsync(top, ct);
+
+        return users.Select((u, index) => new LeaderboardEntryDto
+        {
+            Rank = index + 1,
+            Username = u.Username,
+            TotalXp = u.TotalXp,
+            CurrentStreakDays = u.CurrentStreakDays
+        }).ToList();
+    }
 }
