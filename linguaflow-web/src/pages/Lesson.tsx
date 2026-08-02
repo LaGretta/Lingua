@@ -78,6 +78,7 @@ function LessonRunner({ lessonId, exercises }: { lessonId: number; exercises: Ex
   const [totalXp, setTotalXp] = useState(0);
   const [finished, setFinished] = useState(false);
   const [completionRecorded, setCompletionRecorded] = useState<boolean | null>(null);
+  const [limitMessage, setLimitMessage] = useState<string | null>(null);
 
   const ex = exercises[index];
   const isFlashcard = ex.type === 'Flashcard';
@@ -130,12 +131,17 @@ function LessonRunner({ lessonId, exercises }: { lessonId: number; exercises: Ex
   async function finishLesson() {
     setBusy(true);
     try {
-      // GAP: /api/lessons/complete is not wired to a controller and 404s. Treat that
-      // as "not recorded" instead of a hard error so the learner still gets closure.
       await lessonsApi.complete({ lessonId, score: correctCount, totalXp });
       setCompletionRecorded(true);
     } catch (e) {
-      setCompletionRecorded(!(e instanceof ApiError) ? true : false);
+      // Free users hit a daily limit (409) — show a calm upgrade prompt, not an error.
+      if (e instanceof ApiError && e.status === 409) {
+        setLimitMessage(e.message);
+        setCompletionRecorded(false);
+      } else {
+        // Any other failure: still give the learner closure, but note it wasn't saved.
+        setCompletionRecorded(false);
+      }
     } finally {
       setBusy(false);
       setFinished(true);
@@ -158,6 +164,7 @@ function LessonRunner({ lessonId, exercises }: { lessonId: number; exercises: Ex
         correct={correctCount}
         total={total}
         recorded={completionRecorded}
+        limitMessage={limitMessage}
         onDone={() => nav('/', { replace: true })}
       />
     );
@@ -391,14 +398,56 @@ function CompletionScreen({
   correct,
   total,
   recorded,
+  limitMessage,
   onDone,
 }: {
   totalXp: number;
   correct: number;
   total: number;
   recorded: boolean | null;
+  limitMessage: string | null;
   onDone: () => void;
 }) {
+  const [upgradeHint, setUpgradeHint] = useState(false);
+
+  // Free daily limit reached: a calm upgrade prompt instead of a celebration.
+  if (limitMessage) {
+    return (
+      <Screen center>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 22, textAlign: 'center' }}>
+          <div
+            style={{
+              width: 88,
+              height: 88,
+              borderRadius: 28,
+              background: 'var(--accent-soft)',
+              display: 'grid',
+              placeItems: 'center',
+              color: 'var(--accent)',
+              boxShadow: 'var(--sh-accent-soft)',
+            }}
+          >
+            <LeafIcon size={40} strokeWidth={1.6} />
+          </div>
+          <div>
+            <div className="display" style={{ fontSize: 28 }}>
+              That’s your 3 for today
+            </div>
+            <p className="subtle" style={{ marginTop: 10, fontSize: 16, maxWidth: 300 }}>
+              {limitMessage}
+            </p>
+          </div>
+          <button className="btn btn-primary" onClick={() => setUpgradeHint(true)} style={{ width: 'auto', padding: '14px 26px' }}>
+            {upgradeHint ? 'Coming soon' : 'Upgrade to Pro'}
+          </button>
+        </div>
+        <button className="btn btn-secondary" onClick={onDone} style={{ marginBottom: 8 }}>
+          Back home
+        </button>
+      </Screen>
+    );
+  }
+
   return (
     <Screen center>
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 22, textAlign: 'center' }}>
@@ -427,8 +476,7 @@ function CompletionScreen({
         </div>
         {recorded === false && (
           <div className="notice" style={{ maxWidth: 300 }}>
-            Your XP couldn’t be saved to your profile — the API’s
-            <code> /api/lessons/complete</code> route isn’t available yet (see README).
+            Your XP couldn’t be saved right now. Please check your connection and try again.
           </div>
         )}
       </div>

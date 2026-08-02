@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Screen } from '../components/Screen';
 import { useAuth } from '../auth/AuthContext';
@@ -8,20 +9,23 @@ import { Avatar } from '../components/Avatar';
 export function Profile() {
   const { user, logout } = useAuth();
   const nav = useNavigate();
+  const [upgradeHint, setUpgradeHint] = useState(false);
 
-  // Live profile (streak + XP) from GET /api/users/me.
+  // Live profile (streak, XP, word counts) from GET /api/users/me.
   const { data: me, loading, error } = useAsync(() => usersApi.me(), []);
 
   const fmt = (n: number | undefined) =>
     loading ? '…' : n == null ? '—' : n.toLocaleString();
 
-  // The profile DTO exposes streak + XP; words-learned / longest-streak aren't tracked yet.
   const stats: { label: string; value: string }[] = [
     { label: 'Day streak', value: fmt(me?.currentStreakDays) },
     { label: 'Total XP', value: fmt(me?.totalXp) },
-    { label: 'Words learned', value: '—' },
-    { label: 'Longest streak', value: '—' },
+    { label: 'Words learned', value: fmt(me?.wordsLearned) },
+    { label: 'Words in progress', value: fmt(me?.wordsInProgress) },
   ];
+
+  const planTier = me?.planTier ?? user?.planTier;
+  const isFree = planTier === 'Free';
 
   return (
     <Screen tabbar>
@@ -62,6 +66,20 @@ export function Profile() {
           </div>
         ))}
       </div>
+
+      {isFree && (
+        <div className="card" style={{ boxShadow: 'none', background: 'var(--accent-soft)', border: '1px solid rgba(47,107,78,0.18)' }}>
+          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--accent-ink)' }}>
+            Free plan
+          </div>
+          <p style={{ fontSize: 13.5, lineHeight: 1.5, color: 'var(--accent-soft-ink)', margin: '4px 0 12px' }}>
+            You can complete up to 3 lessons a day. Upgrade to Pro for unlimited learning.
+          </p>
+          <button className="btn btn-primary" onClick={() => setUpgradeHint(true)} style={{ padding: 14 }}>
+            {upgradeHint ? 'Coming soon' : 'Upgrade to Pro'}
+          </button>
+        </div>
+      )}
 
       <button
         className="btn btn-secondary"

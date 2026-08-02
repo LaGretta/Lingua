@@ -29,7 +29,7 @@ export interface AuthResponse {
   planTier: PlanTier;
 }
 
-// GET /api/users/me — UserResponseDto (no token; carries the live streak/XP).
+// GET /api/users/me — UserResponseDto (no token; carries the live streak/XP/word counts).
 export interface UserProfile {
   id: number;
   username: string;
@@ -38,6 +38,8 @@ export interface UserProfile {
   planTier: PlanTier;
   currentStreakDays: number;
   totalXp: number;
+  wordsLearned: number;
+  wordsInProgress: number;
 }
 
 // GET /api/users/leaderboard — ranked highest XP first.
