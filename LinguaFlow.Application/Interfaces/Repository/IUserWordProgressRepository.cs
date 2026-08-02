@@ -10,4 +10,6 @@ public interface IUserWordProgressRepository
     void Update(UserWordProgress progress);
     Task<List<int>> GetExistingWordIdsAsync(int userId, List<int> wordIds, CancellationToken ct);
     Task AddRangeAsync(List<UserWordProgress> items, CancellationToken ct);
+    Task<int> CountLearnedAsync(int userId, CancellationToken ct);
+    Task<int> CountInProgressAsync(int userId, CancellationToken ct);
 }

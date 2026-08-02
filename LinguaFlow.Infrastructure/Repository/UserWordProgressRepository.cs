@@ -46,4 +46,14 @@ public class UserWordProgressRepository : IUserWordProgressRepository
     {
         await _dbContext.UserWordProgress.AddRangeAsync(items, ct);
     }
+    public async Task<int> CountLearnedAsync(int userId, CancellationToken ct)
+    {
+        return await _dbContext.UserWordProgress
+            .CountAsync(p => p.UserId == userId && p.IsLearned, ct);
+    }
+    public async Task<int> CountInProgressAsync(int userId, CancellationToken ct)
+    {
+        return await _dbContext.UserWordProgress
+            .CountAsync(p => p.UserId == userId, ct);
+    }
 }

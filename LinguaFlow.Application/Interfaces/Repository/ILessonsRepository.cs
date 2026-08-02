@@ -11,4 +11,5 @@ public interface ILessonsRepository
     
     Task AddWordsToLessonAsync(List<LessonItem> items, CancellationToken ct);
     Task AddCompletionAsync(LessonCompletion completion, CancellationToken ct);
+    Task<int> CountCompletionsTodayAsync(int userId, CancellationToken ct);
 }

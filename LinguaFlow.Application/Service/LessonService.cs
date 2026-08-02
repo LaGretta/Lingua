@@ -179,6 +179,16 @@ public class LessonService : ILessonService
         var user = await _authRepository.GetByIdAsync(userId, ct);
         if (user == null)
             throw new KeyNotFoundException("User not found");
+        
+        if (user.PlanTier == PlanTier.Free)
+        {
+            const int freeDailyLimit = 3;
+            var todayCount = await _lessonsRepository.CountCompletionsTodayAsync(userId, ct);
+            if (todayCount >= freeDailyLimit)
+                throw new InvalidOperationException(
+                    $"Daily limit reached ({freeDailyLimit} lessons). Upgrade to Pro for unlimited learning.");
+        }
+        
         var completion = new LessonCompletion
         {
             UserId = userId,

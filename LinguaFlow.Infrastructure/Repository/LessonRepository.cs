@@ -47,5 +47,15 @@ public class LessonRepository : ILessonsRepository
     {
         await _dbContext.LessonCompletions.AddAsync(completion, ct);
     }
+    public async Task<int> CountCompletionsTodayAsync(int userId, CancellationToken ct)
+    {
+        var today = DateTime.UtcNow.Date;
+        var tomorrow = today.AddDays(1);
+
+        return await _dbContext.LessonCompletions
+            .CountAsync(c => c.UserId == userId
+                             && c.CompletedAt >= today
+                             && c.CompletedAt < tomorrow, ct);
+    }
 }
 

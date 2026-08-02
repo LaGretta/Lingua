@@ -18,6 +18,7 @@ public class AuthService : IAuthService
     private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly ILogger<AuthService> _logger;
+    private readonly IUserWordProgressRepository _progressRepository;
     
     public AuthService(
         IAuthRepository authRepository
@@ -25,7 +26,8 @@ public class AuthService : IAuthService
         , IMapper mapper
         , IPasswordHasher passwordHasher
         , IJwtTokenGenerator jwtTokenGenerator
-        , ILogger<AuthService> logger)
+        , ILogger<AuthService> logger
+        , IUserWordProgressRepository progressRepository)
     {
         _authRepository = authRepository;
         _unitOfWork = unitOfWork;
@@ -33,6 +35,7 @@ public class AuthService : IAuthService
         _passwordHasher = passwordHasher;
         _jwtTokenGenerator = jwtTokenGenerator;
         _logger = logger;
+        _progressRepository = progressRepository;
     }
 
     public async Task<AuthResponseDto> Register(RegisterDto registerDto, CancellationToken ct)
@@ -80,7 +83,10 @@ public class AuthService : IAuthService
         if (user == null)
             throw new KeyNotFoundException("User not found");
 
-        return _mapper.Map<UserResponseDto>(user);
+        var dto = _mapper.Map<UserResponseDto>(user);
+        dto.WordsLearned = await _progressRepository.CountLearnedAsync(userId, ct);
+        dto.WordsInProgress = await _progressRepository.CountInProgressAsync(userId, ct);
+        return dto;
     }
     public async Task<List<LeaderboardEntryDto>> GetLeaderboard(int top, CancellationToken ct)
     {

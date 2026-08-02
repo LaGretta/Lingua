@@ -11,4 +11,6 @@ public class UserResponseDto
     public PlanTier PlanTier { get; set; }
     public int CurrentStreakDays { get; set; }
     public int TotalXp { get; set; }
+    public int WordsLearned { get; set; }
+    public int WordsInProgress { get; set; }
 }
